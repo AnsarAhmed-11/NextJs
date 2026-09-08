@@ -1,26 +1,75 @@
-@import "tailwindcss";
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  height: 100%;
+  width: 100%;
+  background: black;
+  color: white;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  user-select: none;
+  justify-content: space-around;
+  height: 70vh;
+  width: 30vw;
+  padding: 10px;
+  border: #000;
+  box-shadow: 1px 1px 7px white;
+  border-radius: 20px;
+  backdrop-filter: blur(1px);
+  animation: shadowColor 2s infinite alternate;
+  margin: 0 auto;
+  transform: translateY(20%);
+}
+
+.form .form-fields {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: center;
+  height: max-content;
+  transform: translate(3%, -50%);
+  position: relative;
+}
+
+.form-fields button {
+  width: 60%;
+  margin: 0 auto;
+  border-radius: 10px;
+  padding: 4px 3px;
+}
+
+.form h2 {
+  color: transparent;
+  text-align: center;
+  font-weight: 900;
+  -webkit-text-stroke: 1px red;
+}
+
+input {
+  width: 90%;
+  border-radius: 10px;
+  padding: 4px 3px;
+}
+
+span {
+  white-space: nowrap;
+  margin: 0 auto;
+  color: #8ecae6;
+}
+h1{
+    letter-spacing: 20px;
+    font-size: 4rem;
+    text-align: center;
+    font-family: fantasy;
+    color: transparent;
+    -webkit-text-stroke: .1px white;
+    position: relative;
+
 }

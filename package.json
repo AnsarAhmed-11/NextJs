@@ -4,11 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "start": "npm run dev",
     "build": "next build",
-    "start": "next start",
     "lint": "eslint"
   },
   "dependencies": {
+    "lucide-react": "^1.21.0",
     "next": "16.3.3",
     "react": "19.2.8",
     "react-dom": "19.2.8"
@@ -18,7 +19,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "eslint": "^9",
+    "eslint": "^10.9.1",
     "eslint-config-next": "16.3.3",
     "tailwindcss": "^4",
     "typescript": "^5"

@@ -1,0 +1,32 @@
+.navbar {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background:transparent;
+  border-radius: 30px;
+  height: 50px;
+  width: 95%;
+  position: relative;
+  margin: 10px 30px;
+  user-select: none;
+}
+
+.navbar a {
+  font-family: fantasy;
+  letter-spacing: 3px;
+  font-weight: normal;
+  text-decoration: none;
+  color: white;
+}
+
+.navbar a:first-child {
+  font-family: var(--font-logo);
+}
+.navbar img {
+  scale: 2.7;
+  background: white;
+  padding: 1px;
+  height: 10px;
+  border-radius:4%;
+  align-self: center;
+}
