@@ -52,10 +52,16 @@ body {
   -webkit-text-stroke: 1px red;
 }
 
-input {
+input:not(#showPassword) {
   width: 90%;
   border-radius: 10px;
   padding: 4px 3px;
+}
+
+#showPassword{
+    position: absolute;
+    bottom: 5px;
+    right: 40px;
 }
 
 span {
@@ -63,13 +69,109 @@ span {
   margin: 0 auto;
   color: #8ecae6;
 }
-h1{
-    letter-spacing: 20px;
-    font-size: 4rem;
-    text-align: center;
-    font-family: fantasy;
-    color: transparent;
-    -webkit-text-stroke: .1px white;
-    position: relative;
 
+h1 {
+  letter-spacing: 20px;
+  font-size: 4rem;
+  text-align: center;
+  font-family: fantasy;
+  color: transparent;
+  -webkit-text-stroke: .1px white;
+  position: relative;
+
+}
+.user-data {
+  margin: 0 auto;
+  width: 90vw;
+  max-height: 80vh;
+  /* overflow-y: auto; */
+  overflow-x: hidden;
+  border-radius: 20px;
+  /* box-shadow: 1px 1px 5px lightseagreen, -1px -1px 10px lightseagreen; */
+  background: #3535351c;
+  backdrop-filter: blur(3px);
+  padding: 10px;
+  animation: shadowColor 5s infinite linear;
+}
+
+@keyframes shadowColor {
+  0% {
+    box-shadow: 0 0 5px #f72585, 0 0 15px #f72585;
+  }
+
+  11% {
+    box-shadow: 0 0 5px #b5179e, 0 0 15px #b5179e;
+  }
+
+  22% {
+    box-shadow: 0 0 5px #7209b7, 0 0 15px #7209b7;
+  }
+
+  33% {
+    box-shadow: 0 0 5px #560bad, 0 0 15px #560bad;
+  }
+
+  44% {
+    box-shadow: 0 0 5px #480ca8, 0 0 15px #480ca8;
+  }
+
+  55% {
+    box-shadow: 0 0 5px #3a0ca3, 0 0 15px #3a0ca3;
+  }
+
+  66% {
+    box-shadow: 0 0 5px #3f37c9, 0 0 15px #3f37c9;
+  }
+
+  77% {
+    box-shadow: 0 0 5px #4361ee, 0 0 15px #4361ee;
+  }
+
+  88% {
+    box-shadow: 0 0 5px #4895ef, 0 0 15px #4895ef;
+  }
+
+  100% {
+    box-shadow: 0 0 5px #4cc9f0, 0 0 15px #4cc9f0;
+  }
+}
+
+.user-data table {
+  user-select: none;
+  width: 100%;
+  margin: 0 auto;
+  border-collapse: collapse;
+  color: white;
+  text-align: center;
+  scale: .97;
+}
+
+.user-data thead {
+  position: sticky;
+  top: -20%;
+}
+
+.user-data th {
+  background: darkslategrey;
+  padding: 15px;
+  font-size: 18px;
+  letter-spacing: 1px;
+}
+
+.user-data td {
+  padding: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.user-data tbody tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.user-data tbody tr:hover {
+  background: rgba(32, 178, 171, 0.2);
+  transition: 0.3s;
+}
+
+.user-data::-webkit-scrollbar {
+  width: 8px;
 }
