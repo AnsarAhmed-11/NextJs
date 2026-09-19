@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -9,8 +8,8 @@ const Page = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get("http://localhost:3000/api/users");
-        setUsers(res.data.students);
+        const res = await axios.get("http://localhost:3000/api/employees");
+        // setUsers(res.data.emp);
         console.log("this is res data", res.data);
       } catch (err) {
         console.log("error is here",err);
@@ -20,11 +19,11 @@ const Page = () => {
     fetchData();
   }, []);
 
-  console.log("students", users);
+  console.log("users", users);
 
   return (
     <div>
-      <h1>Users Data</h1>
+      <h1>Employee Data</h1>
 
       {users === 0 ? (
         <p>No Data Found</p>
@@ -36,9 +35,7 @@ const Page = () => {
                 <th>S.No</th>
                 <th>Name</th>
                 <th>Email</th>
-                <th>Age</th>
-                <th>Grade</th>
-                <th>City</th>
+                <th>Password</th>
               </tr>
             </thead>
 
@@ -48,9 +45,7 @@ const Page = () => {
                   <td>{index + 1}</td>
                   <td>{user.name}</td>
                   <td>{user.email}</td>
-                  <td>{user.age}</td>
-                  <td>{user.grade}</td>
-                  <td>{user.city}</td>
+                  <td>{user.password}</td>
                 </tr>
               ))}
             </tbody>

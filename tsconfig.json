@@ -30,6 +30,6 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts"
-, "app/Components/ui/Sections/SectionFirst.jsx", "app/Components/layout/Header/Navbar.jsx", "app/page.jsx", "app/layout.tsx", "app/Components/layout/Footer/footer.tsx"  ],
+, "app/Components/ui/Sections/SectionFirst.jsx", "app/Components/layout/Header/Navbar.jsx", "app/page.jsx", "app/layout.tsx", "app/Components/layout/Footer/footer.tsx", "app/config/db.js"  ],
   "exclude": ["node_modules"]
 }

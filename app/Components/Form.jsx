@@ -9,15 +9,14 @@ const Form = ({ formType, type1, type2, type3, password }) => {
         const name = formData.get("name")
         const email = formData.get('email')
         const password = formData.get('password')
-        console.log(name,email,password);
         try {
             const res = await axios.post("http://localhost:3000/api/users", {
                 name, email, password
             })
-            console.log(res.data.name);
-            return { message: res.data.message || "request Back again" }
+            console.log("this is data",res.data);
+            return { message: res.data.message || "response data message of UI" }
         } catch (err) {
-            return { error: err.response?.data?.message || "server error", }
+            return { error: err.response?.data?.error || "frontend catch Error", }
         }
     }
     const [data, action, pending] = useActionState(formHandler, undefined)
@@ -54,8 +53,8 @@ const Form = ({ formType, type1, type2, type3, password }) => {
 
                 </div>
                 <div className="form-fields">
-                    <button >
-                        submit
+                    <button disabled={pending}>
+                        {pending?"submitting...":"submit"}
                     </button>
                 </div>
 
