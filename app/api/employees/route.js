@@ -5,16 +5,14 @@ const { findByEmail, getUser } = require("../../models/emp.model")
 
 export async function GET(request) {
     const employees = await getUser()
-    console.log(employees);
-
     if (employees.length < 0) {
         return NextResponse.json({
             message: "not data Found",
         })
     }
     return NextResponse.json({
-        message: "user fetch successfully"
-        ,employees
+        message: "emp data sended",
+        employees
     })
 
 }

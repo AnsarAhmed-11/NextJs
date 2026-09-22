@@ -9,8 +9,7 @@ const Page = () => {
     const fetchData = async () => {
       try {
         const res = await axios.get("http://localhost:3000/api/employees");
-        // setUsers(res.data.emp);
-        console.log("this is res data", res.data);
+        setUsers(res.data.employees);
       } catch (err) {
         console.log("error is here",err);
       }
@@ -19,12 +18,10 @@ const Page = () => {
     fetchData();
   }, []);
 
-  console.log("users", users);
 
   return (
     <div>
-      <h1>Employee Data</h1>
-
+      <h1 className="text-2xl">Employee Data</h1>
       {users === 0 ? (
         <p>No Data Found</p>
       ) : (
@@ -34,20 +31,22 @@ const Page = () => {
               <tr>
                 <th>S.No</th>
                 <th>Name</th>
-                <th>Email</th>
-                <th>Password</th>
+                <th>Job</th>
+                <th>Salary</th>
+                <th>Hire Date</th>
               </tr>
             </thead>
 
             <tbody>
               {users.map((user, index) => (
-                <tr key={user.id}>
+                <tr key={user.emp_id}>
                   <td>{index + 1}</td>
-                  <td>{user.name}</td>
-                  <td>{user.email}</td>
-                  <td>{user.password}</td>
+                  <td>{user.emp_name}</td>
+                  <td>{user.job}</td>
+                  <td>{user.salary}</td>
+                  <td>{user.hire_date}</td>
                 </tr>
-              ))}
+              ))}P
             </tbody>
           </table>
         </div>

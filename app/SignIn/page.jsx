@@ -3,40 +3,39 @@
 import axios from "axios";
 import { useActionState, useState } from "react";
 import toast from "react-hot-toast";
-import Link from "next/link";
-const Form = ({ formType }) => {
+
+const LoginForm = () => {
     const [showPassword, setShowPassword] = useState(false);
 
     const formHandler = async (prevData, formData) => {
-        const name = formData.get("name");
         const email = formData.get("email");
         const password = formData.get("password");
 
         try {
-            const res = await axios.post(
-                "http://localhost:3000/api/auth",
-                {
-                    name,
-                    email,
-                    password,
-                }
-            );
+            const res = await axios.post("/api/auth/login", {
+                email,
+                password,
+            });
 
             if (res.data.status === "success") {
-                toast.success("User Created Successfully");
+                toast.success("Login successful!");
+
+                // Change this to your dashboard/home route
+                window.location.href = "/dashboard";
             } else {
-                toast.error("User not Created");
+                toast.error(
+                    res.data.message || "Login failed"
+                );
             }
 
             return {
-                message:
-                    res.data.message ||
-                    "Account created successfully",
+                message: res.data.message || "Login successful",
             };
         } catch (err) {
             const error =
                 err.response?.data?.error ||
-                "Something went wrong";
+                err.response?.data?.message ||
+                "Invalid email or password";
 
             toast.error(error);
 
@@ -53,16 +52,21 @@ const Form = ({ formType }) => {
 
     return (
         <main className="auth-page">
+
             {/* Background decoration */}
             <div className="auth-glow auth-glow-one"></div>
             <div className="auth-glow auth-glow-two"></div>
 
             <section className="auth-card">
+
+
+
                 {/* Heading */}
                 <div className="auth-heading">
-                    <h2>{formType}</h2>
+                    <h2>Welcome Back</h2>
+
                     <p>
-                        Create your account and start your journey.
+                        Sign in to continue your journey.
                     </p>
                 </div>
 
@@ -73,7 +77,7 @@ const Form = ({ formType }) => {
                         type="button"
                         className="social-btn"
                         onClick={() => {
-                            toast.error("it is under development");
+                            toast.error("not working");
                         }}
                     >
                         <svg
@@ -109,7 +113,7 @@ const Form = ({ formType }) => {
                         type="button"
                         className="social-btn"
                         onClick={() => {
-                            toast.error("it is under development");
+                             toast.error("not working");
                         }}
                     >
                         <svg
@@ -131,38 +135,18 @@ const Form = ({ formType }) => {
                     <span>OR</span>
                 </div>
 
-                {/* Form */}
+                {/* Login Form */}
                 <form action={action} className="auth-form">
-
-                    {/* Name */}
-                    <div className="auth-field">
-                        <label htmlFor="name">
-                            Full name
-                        </label>
-
-                        <div className="input-wrapper">
-                            <span className="input-icon">
-                                👤
-                            </span>
-
-                            <input
-                                id="name"
-                                type="text"
-                                name="name"
-                                placeholder="John Doe"
-                                autoComplete="name"
-                                required
-                            />
-                        </div>
-                    </div>
 
                     {/* Email */}
                     <div className="auth-field">
+
                         <label htmlFor="email">
                             Email address
                         </label>
 
                         <div className="input-wrapper">
+
                             <span className="input-icon">
                                 ✉
                             </span>
@@ -175,22 +159,31 @@ const Form = ({ formType }) => {
                                 autoComplete="email"
                                 required
                             />
+
                         </div>
+
                     </div>
 
                     {/* Password */}
                     <div className="auth-field">
+
                         <div className="password-label">
+
                             <label htmlFor="password">
                                 Password
                             </label>
 
-                            <span>
-                                Minimum 8 characters
-                            </span>
+                            <a
+                                href="/forgot-password"
+                                className="forgot-password"
+                            >
+                                Forgot password?
+                            </a>
+
                         </div>
 
                         <div className="input-wrapper">
+
                             <span className="input-icon">
                                 🔒
                             </span>
@@ -204,8 +197,7 @@ const Form = ({ formType }) => {
                                 }
                                 name="password"
                                 placeholder="••••••••"
-                                autoComplete="new-password"
-                                minLength={8}
+                                autoComplete="current-password"
                                 required
                             />
 
@@ -222,26 +214,23 @@ const Form = ({ formType }) => {
                                     ? "Hide"
                                     : "Show"}
                             </button>
+
                         </div>
+
                     </div>
 
-                    {/* Terms */}
+                    {/* Remember Me */}
                     <label className="terms">
+
                         <input
                             type="checkbox"
-                            required
+                            name="remember"
                         />
 
                         <span>
-                            I agree to the{" "}
-                            <a href="/terms">
-                                Terms of Service
-                            </a>{" "}
-                            and{" "}
-                            <a href="/privacy">
-                                Privacy Policy
-                            </a>
+                            Remember me
                         </span>
+
                     </label>
 
                     {/* Submit */}
@@ -253,10 +242,10 @@ const Form = ({ formType }) => {
                         {pending ? (
                             <>
                                 <span className="spinner"></span>
-                                Creating account...
+                                Signing in...
                             </>
                         ) : (
-                            "Create Account →"
+                            "Sign In →"
                         )}
                     </button>
 
@@ -276,10 +265,12 @@ const Form = ({ formType }) => {
                     </div>
                 )}
 
-                {/* Login */}
+                {/* Register */}
                 <p className="login-text">
-                    Already have an account?{" "}
-                    <Link href="/SignIn">SignIn</Link>
+                    Don't have an account?{" "}
+                    <a href="/register">
+                        Create account
+                    </a>
                 </p>
 
             </section>
@@ -287,4 +278,4 @@ const Form = ({ formType }) => {
     );
 };
 
-export default Form;
+export default LoginForm;

@@ -13,4 +13,9 @@ const getUser = async () => {
   const [result] = await db.execute(sql);
   return result;
 };
-export { findByEmail, getUser };
+const createUser = async (name, email, password) => {
+  const sql = "insert into students (name,email,password) values(?,?,?)"
+  const [result] = await db.execute(sql, [name, email, password])
+  return result
+}
+export { findByEmail, getUser, createUser };

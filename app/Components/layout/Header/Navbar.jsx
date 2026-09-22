@@ -3,11 +3,15 @@ import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import Styles from "@/app/Components/layout/Header/navbar.module.css"
+import toast from "react-hot-toast";
 const Navbar = () => {
-  const [value,setValue]=useState(null)
-  useEffect(()=>{
-    const loggedIn=localStorage.getItem("loggedin")
-  },[])
+  const [value, setValue] = useState(null)
+  useEffect(() => {
+    const loggedIn = localStorage.getItem("loggedin")
+  }, [])
+  const handleClick = () => {
+    toast.success("Success!");
+  }
   return (
     <>
       <nav className={Styles.navbar}>
@@ -19,7 +23,9 @@ const Navbar = () => {
         <Link href="">Shop</Link>
         {value ? (
           <Link href="">Cart</Link>
-        ) : <Link href="/login">Login</Link>}
+
+        ) : <Link href="/SignUp">SingUp</Link>}
+
       </nav>
     </>
   )
