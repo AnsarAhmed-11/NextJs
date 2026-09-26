@@ -46,7 +46,7 @@ const Page = () => {
                   <td>{user.salary}</td>
                   <td>{user.hire_date}</td>
                 </tr>
-              ))}P
+              ))}
             </tbody>
           </table>
         </div>

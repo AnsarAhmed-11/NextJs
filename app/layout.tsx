@@ -1,8 +1,8 @@
 import { Toaster } from "react-hot-toast";
 import type { Metadata } from "next";
 import { Delius, Exo_2 } from "next/font/google";
+import { CartProvider } from "./Components/cart/CartContext";
 import "./globals.css";
-import Navbar from "./Components/layout/Header/Navbar";
 
 const exo = Exo_2({
   subsets: ["latin"],
@@ -24,8 +24,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en">
       <body className={exo.className}>
-        <Toaster />
-        {children}
+        <CartProvider>
+          <Toaster />
+          {children}
+        </CartProvider>
         </body>
     </html>
   );

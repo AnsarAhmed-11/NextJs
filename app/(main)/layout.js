@@ -1,4 +1,4 @@
-import Navbar from "../Components/layout/Header/Navbar"
+import Navbar from "../Components/layout/navigation/Navbar"
 export default function MainLayout({children}) {
   return (
     <>
