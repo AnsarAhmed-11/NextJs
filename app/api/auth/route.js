@@ -1,5 +1,11 @@
 import { NextResponse } from "next/server";
-const {findByEmail,createUser}=require("../../models/user.model")
+const { findByEmail, createUser } = require("../../models/user.model")
+/**
+ *
+ * - / POST /api/auth
+ * - / Create User Account
+ */
+
 export async function POST(request) {
     try {
         const { name, email, password } = await request.json();

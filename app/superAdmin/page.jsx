@@ -11,6 +11,7 @@ import {
   Database,
   FolderOpen,
   ImagePlus,
+  LogOut,
   MoreHorizontal,
   Search,
   Shield,
@@ -22,6 +23,7 @@ import {
   X,
 } from "lucide-react";
 import styles from "./superAdmin.module.css";
+import { useRouter } from "next/navigation";
 
 const startingUsers = [
   { id: 1, name: "Olivia Bennett", email: "olivia.bennett@northstar.co", initials: "OB", tone: "coral", role: "Admin", status: "Active", lastActive: "Now" },
@@ -32,6 +34,8 @@ const startingUsers = [
 ];
 
 export default function SuperAdminPage() {
+  const router = useRouter();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [users, setUsers] = useState(startingUsers);
   const [query, setQuery] = useState("");
   const [roleFilter, setRoleFilter] = useState("All roles");
@@ -46,6 +50,21 @@ export default function SuperAdminPage() {
   }), [users, query, roleFilter]);
 
   const adminCount = users.filter((user) => user.role === "Admin").length;
+
+  async function handleLogout() {
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
+
+    try {
+      const response = await fetch("/api/auth/logout", { method: "POST" });
+      if (!response.ok) throw new Error("Logout failed");
+      router.replace("/SignIn");
+      router.refresh();
+    } catch {
+      setIsLoggingOut(false);
+      setNotice("Could not sign out. Please try again.");
+    }
+  }
 
   function toggleRole(id) {
     setUsers((current) => current.map((user) => {
@@ -84,7 +103,7 @@ export default function SuperAdminPage() {
       <section className={styles.content}>
         <header className={styles.topbar}>
           <div className={styles.breadcrumb}><span>Control center</span><span>/</span><strong>User access</strong></div>
-          <div className={styles.headerActions}><button className={styles.iconButton} aria-label="Notifications"><Bell size={19} /><i /></button><span className={`${styles.avatar} ${styles.headerAvatar}`}>SA</span></div>
+          <div className={styles.headerActions}><button className={styles.iconButton} aria-label="Notifications"><Bell size={19} /><i /></button><span className={`${styles.avatar} ${styles.headerAvatar}`}>SA</span><button className={styles.logoutButton} onClick={handleLogout} disabled={isLoggingOut}><LogOut size={16} /><span>{isLoggingOut ? "Signing out…" : "Sign out"}</span></button></div>
         </header>
 
         <div className={styles.pageIntro}>

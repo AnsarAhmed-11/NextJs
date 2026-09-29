@@ -6,6 +6,8 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { useCart } from "../../cart/CartContext";
 import styles from "./navbar.module.css";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 const links = [
   { href: "/", label: "Home" },
@@ -33,6 +35,16 @@ export default function Navbar() {
           <Link href="/cart" className={styles.bagButton} aria-label={`Shopping bag with ${itemCount} items`}><ShoppingBag size={18} /><span>{itemCount}</span></Link>
           <Link href="/SignUp" className={styles.join}>Join us</Link>
           <button className={styles.menuButton} onClick={() => setIsOpen((open) => !open)} aria-label="Toggle menu" aria-expanded={isOpen}>{isOpen ? <X size={21} /> : <Menu size={21} />}</button>
+          <button onClick={async()=>{
+            try{const res=await axios.post("http://localhost:3000/api/auth/logout")
+              if(res.data.status===true){
+                toast.success("LogOut SuccessFully")
+              }
+            }catch(err){
+              console.log(err)
+            }
+
+          }}>LogOut</button>
         </div>
       </nav>
     </header>

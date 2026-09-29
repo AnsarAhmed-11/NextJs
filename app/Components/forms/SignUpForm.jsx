@@ -234,56 +234,60 @@ const Form = ({ formType }) => {
 
                         <span>
                             I agree to the{" "}
-                            <a href="/terms">
+                            <a onClick={() => {
+                                toast.error("under development")
+                            }}>
                                 Terms of Service
                             </a>{" "}
                             and{" "}
-                            <a href="/privacy">
-                                Privacy Policy
-                            </a>
-                        </span>
-                    </label>
+                            <a onClick={() => {
+                                toast.error("under development")
+                            }}>
+                            Privacy Policy
+                        </a>
+                    </span>
+                </label>
 
-                    {/* Submit */}
-                    <button
-                        type="submit"
-                        disabled={pending}
-                        className="submit-btn"
-                    >
-                        {pending ? (
-                            <>
-                                <span className="spinner"></span>
-                                Creating account...
-                            </>
-                        ) : (
-                            "Create Account →"
-                        )}
-                    </button>
+                {/* Submit */}
+                <button
+                    type="submit"
+                    disabled={pending}
+                    className="submit-btn"
+                >
+                    {pending ? (
+                        <>
+                            <span className="spinner"></span>
+                            Creating account...
+                        </>
+                    ) : (
+                        "Create Account →"
+                    )}
+                </button>
 
-                </form>
+            </form>
 
-                {/* Error */}
-                {data?.error && (
-                    <div className="form-error">
-                        ⚠ {data.error}
-                    </div>
-                )}
+            {/* Error */}
+            {data?.error && (
+                <div className="form-error">
+                    ⚠ {data.error}
+                </div>
+            )}
 
-                {/* Success */}
-                {data?.message && !data?.error && (
-                    <div className="form-success">
-                        ✓ {data.message}
-                    </div>
-                )}
+            {/* Success */}
+            {data?.message && !data?.error && (
+                <div className="form-success">
+                    ✓ {data.message}
+                </div>
+            )}
 
-                {/* Login */}
-                <p className="login-text">
-                    Already have an account?{" "}
-                    <Link href="/SignIn">SignIn</Link>
-                </p>
+            {/* Login */}
+            <p className="login-text">
+                Already have an account?{" "}
+                <Link href="/SignIn">SignIn</Link>
+            </p>
 
-            </section>
-        </main>
+        </section>
+        </main >
     );
 };
 
