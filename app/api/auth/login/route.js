@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-
+import bcrypt from "bcryptjs";
 const { findByEmail } = require("../../../models/user.model");
 const { createToken } = require("../../../config/auth");
 
@@ -30,8 +30,10 @@ export async function POST(request) {
         }
 
         // Check password here
-        const isPassword = password === user.password_hash;
+        console.log("user password",user.password_hash);
+        console.log("ui password",password);
 
+        const isPassword = await bcrypt.compare(password,user.password_hash)
         if (!isPassword) {
             return NextResponse.json(
                 {

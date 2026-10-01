@@ -26,7 +26,8 @@ export async function proxy(request) {
                 new URL("/SignIn", request.url)
             );
         }
-
+        console.log("user ",user);
+        
         console.log("User role:", user.role);
 
         // Super Admin can access superAdmin

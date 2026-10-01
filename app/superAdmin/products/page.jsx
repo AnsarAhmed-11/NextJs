@@ -20,6 +20,7 @@ import Link from "next/link";
 import adminStyles from "../superAdmin.module.css";
 import styles from "./productAdmin.module.css";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 const emptyProduct = {
   name: "",
@@ -39,6 +40,7 @@ export default function ProductAdminPage() {
   const [products, setProducts] = useState([]);
   const [notice, setNotice] = useState("");
   const inputRef = useRef(null);
+  const [loading, setLoading] = useState(false);
 
   function updateField(event) {
     const { name, value, type, checked } = event.target;
@@ -56,59 +58,78 @@ export default function ProductAdminPage() {
 
   function handleImage(event) {
     const file = event.target.files?.[0];
+
     if (!file) return;
-    setImage({ name: file.name, url: URL.createObjectURL(file) });
+
+    setImage({
+      file: file,
+      name: file.name,
+      url: URL.createObjectURL(file),
+    });
+
     event.target.value = "";
   }
 
-async function submitProduct(event) {
-  event.preventDefault();
+  async function submitProduct(event) {
+    event.preventDefault();
 
-  if (!form.name || !form.price || !form.stock || !image) {
-    setNotice("Add a product name, price, stock quantity, and product image first.");
-    return;
+    if (!form.name || !form.price || !form.stock || !image) {
+      setNotice("Add a product name, price, stock quantity, and product image first.");
+      return;
+    }
+
+    const productPayload = {
+      ...form,
+      price: Number(form.price),
+      stock: Number(form.stock),
+      imageName: image.name,
+    };
+    const formData = new FormData();
+
+    // Product fields
+    formData.append("name", productPayload.name);
+    formData.append("category", productPayload.category);
+    formData.append("price", productPayload.price);
+    formData.append("stock", productPayload.stock);
+    formData.append("color", productPayload.color);
+    formData.append("slug", productPayload.slug);
+    formData.append("description", productPayload.description);
+    formData.append("status", productPayload.status);
+    formData.append("featured", productPayload.featured);
+    // Image
+    formData.append("file", image.file);
+    try {
+
+      const response = await toast.promise(axios.post("/api/products", formData),   {
+      pending: "Uploading product...",
+      success: "Product uploaded successfully!",
+      error: "Product upload failed!",
+    })
+
+      const result = response.data;
+      console.log("Product API response:", result);
+
+      setProducts((current) => [
+        {
+          ...productPayload,
+          id: Date.now(),
+          image: image.url,
+        },
+        ...current,
+      ]);
+
+      setNotice(`${form.name} was sent to /api/products and logged to the console.`);
+      setForm(emptyProduct);
+      setImage(null);
+    } catch (error) {
+      console.error("Product submission failed:", error);
+
+      setNotice(
+        error.response?.data?.message ||
+        "The product could not be sent. Check the browser console."
+      );
+    }
   }
-
-  const productPayload = {
-    ...form,
-    price: Number(form.price),
-    stock: Number(form.stock),
-    imageName: image.name,
-  };
-
-  console.log("Product form payload:", productPayload);
-
-  try {
-    const response = await axios.post("/api/products", productPayload, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    const result = response.data;
-    console.log("Product API response:", result);
-
-    setProducts((current) => [
-      {
-        ...productPayload,
-        id: Date.now(),
-        image: image.url,
-      },
-      ...current,
-    ]);
-
-    setNotice(`${form.name} was sent to /api/products and logged to the console.`);
-    setForm(emptyProduct);
-    setImage(null);
-  } catch (error) {
-    console.error("Product submission failed:", error);
-
-    setNotice(
-      error.response?.data?.message ||
-      "The product could not be sent. Check the browser console."
-    );
-  }
-}
 
 
   return (

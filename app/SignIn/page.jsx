@@ -14,8 +14,7 @@ const LoginForm = () => {
         const password = formData.get("password");
 
         try {
-            const res = await axios.post(
-                "http://localhost:3000/api/auth/login",
+            const res = await axios.post("/api/auth/login",
                 {
                     email,
                     password,
@@ -30,7 +29,6 @@ const LoginForm = () => {
                 }
                 router.push("/")
                 toast.success("Login successful!");
-                // Success ke baad message show karne ki zarurat nahi
                 return {
                     error: null,
                     message: null,
@@ -239,7 +237,7 @@ const LoginForm = () => {
 
                 <p className="login-text">
                     Don't have an account?{" "}
-                    <a href="/register">
+                    <a href="/SignUp">
                         Create account
                     </a>
                 </p>

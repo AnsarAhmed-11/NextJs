@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import bcrypt from "bcryptjs";
 const { findByEmail, createUser } = require("../../models/user.model")
 /**
  *
@@ -15,13 +16,13 @@ export async function POST(request) {
                 error: "user already exists"
             }, { status: 409 })
         }
-        const User = await createUser(name, email, password)
-        console.log(User);
+        const hashPassword = await bcrypt.hash(password, 10)
+        const User = await createUser(name, email, hashPassword)
 
-        return Response.json(
+        return NextResponse.json(
             {
                 message: "User created successfully",
-                id: result.insertId,
+                id: User.insertId,
                 status: "success"
             },
             { status: 201 }
@@ -29,7 +30,7 @@ export async function POST(request) {
     } catch (error) {
         console.error("Database error:", error);
 
-        return Response.json(
+        return NextResponse.json(
             { error: error.message },
             { status: 500 }
         );

@@ -4,9 +4,9 @@ const secret = new TextEncoder().encode(
     process.env.JWT_SECRET_KEY
 );
 
-export async function createToken(userId) {
+export async function createToken(userId,role) {
     return await new SignJWT({
-        userId,
+        userId,role
     })
         .setProtectedHeader({
             alg: "HS256",
