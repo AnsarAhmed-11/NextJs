@@ -27,7 +27,7 @@ export async function proxy(request) {
             );
         }
         console.log("user ",user);
-        
+
         console.log("User role:", user.role);
 
         // Super Admin can access superAdmin

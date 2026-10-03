@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import {
   ArrowUpRight,
@@ -24,7 +24,9 @@ import {
 } from "lucide-react";
 import styles from "./superAdmin.module.css";
 import { useRouter } from "next/navigation";
+import axios from "axios";
 
+//fake users
 const startingUsers = [
   { id: 1, name: "Olivia Bennett", email: "olivia.bennett@northstar.co", initials: "OB", tone: "coral", role: "Admin", status: "Active", lastActive: "Now" },
   { id: 2, name: "Ethan Walker", email: "ethan.walker@northstar.co", initials: "EW", tone: "blue", role: "User", status: "Active", lastActive: "12 min ago" },
@@ -43,6 +45,59 @@ export default function SuperAdminPage() {
   const [uploads, setUploads] = useState([]);
   const inputRef = useRef(null);
 
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const res = await axios.get("/api/users");
+
+        console.log("API RESPONSE:", res.data);
+
+        // API agar { users: [...] } bhejti hai
+        // ya directly [...] bhejti hai, dono handle honge
+        const apiUsers = Array.isArray(res.data)
+          ? res.data
+          : res.data.users || [];
+
+        const formattedUsers = apiUsers.map((user) => {
+          const name = String(user.user_name ?? "").trim();
+          const email = String(user.email ?? "No email").trim();
+
+          const initials = name
+            ? name
+              .split(/\s+/)
+              .filter(Boolean)
+              .map((word) => word.charAt(0))
+              .join("")
+              .substring(0, 2)
+              .toUpperCase()
+            : "U";
+
+          return {
+            id: user.id,
+            name,
+            email,
+            initials,
+            tone: "blue",
+
+            role:
+              user.role === "SUPER_ADMIN" || user.role === "ADMIN"
+                ? "Admin"
+                : "User",
+
+            status: user.status ?? "Active",
+            lastActive: user.lastActive ?? "—",
+          };
+        });
+
+        console.log("FORMATTED USERS:", formattedUsers);
+
+        setUsers(formattedUsers);
+      } catch (error) {
+        console.error("Users fetch error:", error);
+      }
+    };
+    getData();
+  }, []);
   const filteredUsers = useMemo(() => users.filter((user) => {
     const matchesQuery = `${user.name} ${user.email}`.toLowerCase().includes(query.toLowerCase());
     const matchesRole = roleFilter === "All roles" || user.role === roleFilter;
@@ -128,13 +183,68 @@ export default function SuperAdminPage() {
             </div>
             <div className={styles.memberTable}>
               <div className={`${styles.tableRow} ${styles.tableHeader}`}><span>Member</span><span>Role</span><span>Status</span><span>Last active</span><span aria-label="Actions" /></div>
-              {filteredUsers.map((user) => <div className={styles.tableRow} key={user.id}>
-                <span className={styles.person}><i className={`${styles.avatar} ${styles[user.tone]}`}>{user.initials}</i><span><strong>{user.name}</strong><small>{user.email}</small></span></span>
-                <span><button className={`${styles.roleBadge} ${user.role === "Admin" ? styles.adminRole : styles.userRole}`} onClick={() => toggleRole(user.id)}>{user.role === "Admin" ? <ShieldCheck size={14} /> : <UserRound size={14} />}{user.role}</button></span>
-                <span className={`${styles.status} ${user.status === "Active" ? styles.statusActive : styles.statusPending}`}><i />{user.status}</span>
-                <span className={styles.lastActive}>{user.lastActive}</span>
-                <button className={styles.rowMenu} aria-label={`More options for ${user.name}`}><MoreHorizontal size={19} /></button>
-              </div>)}
+              {filteredUsers.map((user) => (
+                <div className={styles.tableRow} key={user.id}>
+
+                  {/* MEMBER */}
+                  <span className={styles.person}>
+                    <span className={`${styles.avatar} ${styles.blue}`}>
+                      {user.initials}
+                    </span>
+
+                    <span className={styles.userInfo}>
+                      <strong>{user.name || "Unknown User"}</strong>
+                      <small>{user.email || "No email"}</small>
+                    </span>
+                  </span>
+
+                  {/* ROLE */}
+                  <span>
+                    <button
+                      type="button"
+                      className={`${styles.roleBadge} ${user.role === "Admin"
+                        ? styles.adminRole
+                        : styles.userRole
+                        }`}
+                      onClick={() => toggleRole(user.id)}
+                    >
+                      {user.role === "Admin" ? (
+                        <ShieldCheck size={14} />
+                      ) : (
+                        <UserRound size={14} />
+                      )}
+
+                      {user.role}
+                    </button>
+                  </span>
+
+                  {/* STATUS */}
+                  <span
+                    className={`${styles.status} ${user.status === "Active"
+                      ? styles.statusActive
+                      : styles.statusPending
+                      }`}
+                  >
+                    <i />
+                    {user.status}
+                  </span>
+
+                  {/* LAST ACTIVE */}
+                  <span className={styles.lastActive}>
+                    {user.lastActive}
+                  </span>
+
+                  {/* ACTION */}
+                  <button
+                    type="button"
+                    className={styles.rowMenu}
+                    aria-label={`More options for ${user.name}`}
+                  >
+                    <MoreHorizontal size={19} />
+                  </button>
+
+                </div>
+              ))}
             </div>
             <div className={styles.tableFooter}><span>Showing {filteredUsers.length} of {users.length} members</span><div><button disabled>Previous</button><button>Next</button></div></div>
           </section>

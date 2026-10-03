@@ -9,10 +9,11 @@ const findByEmail = async (email) => {
 };
 
 const getUser = async () => {
-  const sql = "SELECT * FROM students";
+  const sql = "SELECT * FROM users";
   const [result] = await db.execute(sql);
   return result;
 };
+
 const createUser = async (name, email, password) => {
   const sql = "insert into users (user_name,email,password_hash) values(?,?,?)"
   const [result] = await db.execute(sql, [name, email, password])

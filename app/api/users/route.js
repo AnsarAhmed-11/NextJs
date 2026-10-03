@@ -7,12 +7,12 @@ const { getUser, findByEmail ,createUser} = require("../../models/user.model")
  * -
  */
 
-export async function GET(req) {
+export async function GET(request) {
   try {
-    const students = await getUser()
+    const users = await getUser()
     return NextResponse.json({
-      message: "done",
-      students,
+      message: "Data Send SuccessFully",
+      users,
     });
   } catch (err) {
     console.log("here is err", err);
