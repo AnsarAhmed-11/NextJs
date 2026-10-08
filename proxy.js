@@ -9,7 +9,8 @@ export async function proxy(request) {
     if (
         path.startsWith("/admin") ||
         path.startsWith("/superAdmin") ||
-        path.startsWith("/dashboard")
+        path.startsWith("/dashboard") ||
+        path.startsWith("/superAdmin/products")
     ) {
         // No token
         if (!token) {

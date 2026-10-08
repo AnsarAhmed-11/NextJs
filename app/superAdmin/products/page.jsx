@@ -7,7 +7,7 @@ import {
   CheckCircle2,
   ChevronDown,
   Clock3,
-  Database,
+  Database,LogOut,
   ImagePlus,
   PackagePlus,
   Save,
@@ -41,6 +41,7 @@ export default function ProductAdminPage() {
   const [notice, setNotice] = useState("");
   const inputRef = useRef(null);
   const [loading, setLoading] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false)
 
   function updateField(event) {
     const { name, value, type, checked } = event.target;
@@ -69,7 +70,19 @@ export default function ProductAdminPage() {
 
     event.target.value = "";
   }
-
+  async function handleLogout() {
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
+    try {
+      const response = await fetch("/api/auth/logout", { method: "POST" });
+      if (!response.ok) throw new Error("Logout failed");
+      router.replace("/SignIn");
+      router.refresh();
+    } catch {
+      setIsLoggingOut(false);
+      setNotice("Could not sign out. Please try again.");
+    }
+  }
   async function submitProduct(event) {
     event.preventDefault();
 
@@ -100,11 +113,11 @@ export default function ProductAdminPage() {
     formData.append("file", image.file);
     try {
 
-      const response = await toast.promise(axios.post("/api/products", formData),   {
-      pending: "Uploading product...",
-      success: "Product uploaded successfully!",
-      error: "Product upload failed!",
-    })
+      const response = await toast.promise(axios.post("/api/products", formData), {
+        pending: "Uploading product...",
+        success: "Product uploaded successfully!",
+        error: "Product upload failed!",
+      })
 
       const result = response.data;
       console.log("Product API response:", result);
@@ -131,7 +144,20 @@ export default function ProductAdminPage() {
     }
   }
 
+  async function handleLogout() {
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
 
+    try {
+      const response = await fetch("/api/auth/logout", { method: "POST" });
+      if (!response.ok) throw new Error("Logout failed");
+      router.replace("/SignIn");
+      router.refresh();
+    } catch {
+      setIsLoggingOut(false);
+      setNotice("Could not sign out. Please try again.");
+    }
+  }
   return (
     <main className={adminStyles.dashboard}>
       <aside className={adminStyles.sidebar}>
@@ -151,11 +177,18 @@ export default function ProductAdminPage() {
       <section className={adminStyles.content}>
         <header className={adminStyles.topbar}>
           <div className={adminStyles.breadcrumb}><span>Control center</span><span>/</span><strong>Products</strong></div>
-          <div className={adminStyles.headerActions}><button className={adminStyles.iconButton} aria-label="Notifications"><Bell size={19} /><i /></button><span className={`${adminStyles.avatar} ${adminStyles.headerAvatar}`}>SA</span></div>
+          <div className={adminStyles.headerActions}><button className={adminStyles.iconButton} aria-label="Notifications"><Bell size={19} /><i /></button><span className={`${adminStyles.avatar} ${adminStyles.headerAvatar}`}
+          >SA</span></div>
+          <button className={styles.logoutButton} onClick={handleLogout} disabled={isLoggingOut}>
+            <LogOut size={16} /><span>{isLoggingOut ? "Signing out…" : "Sign out"}</span>
+          </button>
         </header>
 
+
         <div className={styles.pageIntro}>
-          <div><Link href="/superAdmin" className={styles.backLink}><ArrowLeft size={15} /> Back to control center</Link><p className={adminStyles.eyebrow}>Product management</p><h1>Add a product</h1><p>Create product details, add an image, and save it as a draft or publish-ready entry.</p></div>
+          <div><Link href="/superAdmin" className={styles.backLink}><ArrowLeft size={15} /> Back to control center</Link><p className={adminStyles.eyebrow}>Product management</p><h1>Add a product</h1>
+            <p>Create product details, add an image, and save it as a draft or publish-ready entry.</p>
+          </div>
           <div className={styles.introBadge}><PackagePlus size={19} /><span>Manual product entry</span></div>
         </div>
 
