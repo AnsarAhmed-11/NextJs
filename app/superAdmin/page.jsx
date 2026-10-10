@@ -27,18 +27,18 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 
 //fake users
-const startingUsers = [
-  { id: 1, name: "Olivia Bennett", email: "olivia.bennett@northstar.co", initials: "OB", tone: "coral", role: "Admin", status: "Active", lastActive: "Now" },
-  { id: 2, name: "Ethan Walker", email: "ethan.walker@northstar.co", initials: "EW", tone: "blue", role: "User", status: "Active", lastActive: "12 min ago" },
-  { id: 3, name: "Maya Patel", email: "maya.patel@northstar.co", initials: "MP", tone: "gold", role: "User", status: "Pending", lastActive: "Never" },
-  { id: 4, name: "Noah Williams", email: "noah.williams@northstar.co", initials: "NW", tone: "green", role: "Admin", status: "Active", lastActive: "Yesterday" },
-  { id: 5, name: "Sophia Kim", email: "sophia.kim@northstar.co", initials: "SK", tone: "lavender", role: "User", status: "Active", lastActive: "2 days ago" },
-];
+// const startingUsers = [
+//   { id: 1, name: "Olivia Bennett", email: "olivia.bennett@northstar.co", initials: "OB", tone: "coral", role: "Admin", status: "Active", lastActive: "Now" },
+//   { id: 2, name: "Ethan Walker", email: "ethan.walker@northstar.co", initials: "EW", tone: "blue", role: "User", status: "Active", lastActive: "12 min ago" },
+//   { id: 3, name: "Maya Patel", email: "maya.patel@northstar.co", initials: "MP", tone: "gold", role: "User", status: "Pending", lastActive: "Never" },
+//   { id: 4, name: "Noah Williams", email: "noah.williams@northstar.co", initials: "NW", tone: "green", role: "Admin", status: "Active", lastActive: "Yesterday" },
+//   { id: 5, name: "Sophia Kim", email: "sophia.kim@northstar.co", initials: "SK", tone: "lavender", role: "User", status: "Active", lastActive: "2 days ago" },
+// ];
 
 export default function SuperAdminPage() {
   const router = useRouter();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const [users, setUsers] = useState(startingUsers);
+  const [users, setUsers] = useState([]);
   const [query, setQuery] = useState("");
   const [roleFilter, setRoleFilter] = useState("All roles");
   const [notice, setNotice] = useState("");
@@ -49,15 +49,11 @@ export default function SuperAdminPage() {
     const getData = async () => {
       try {
         const res = await axios.get("/api/users");
-
-        console.log("API RESPONSE:", res.data);
-
-        // API agar { users: [...] } bhejti hai
-        // ya directly [...] bhejti hai, dono handle honge
         const apiUsers = Array.isArray(res.data)
           ? res.data
-          : res.data.users || [];
-
+          : Array.isArray(res.data?.users)
+            ? res.data.users
+            : [];
         const formattedUsers = apiUsers.map((user) => {
           const name = String(user.user_name ?? "").trim();
           const email = String(user.email ?? "No email").trim();
@@ -88,23 +84,34 @@ export default function SuperAdminPage() {
             lastActive: user.lastActive ?? "—",
           };
         });
-
-        console.log("FORMATTED USERS:", formattedUsers);
-
         setUsers(formattedUsers);
+        console.log(users);
       } catch (error) {
         console.error("Users fetch error:", error);
       }
     };
     getData();
   }, []);
-  const filteredUsers = useMemo(() => users.filter((user) => {
-    const matchesQuery = `${user.name} ${user.email}`.toLowerCase().includes(query.toLowerCase());
-    const matchesRole = roleFilter === "All roles" || user.role === roleFilter;
-    return matchesQuery && matchesRole;
-  }), [users, query, roleFilter]);
 
-  const adminCount = users.filter((user) => user.role === "Admin").length;
+
+  const filteredUsers = useMemo(() => {
+    return users.filter((user) => {
+      const matchesQuery = `${user.name ?? ""} ${user.email ?? ""}`
+        .toLowerCase()
+        .includes(query.toLowerCase());
+
+      const matchesRole =
+        roleFilter === "All roles" || user.role === roleFilter;
+
+      return matchesQuery && matchesRole;
+    });
+  }, [users, query, roleFilter]);
+
+  var adminCount = users.filter(
+    (user) => user.role === "Admin"
+  ).length;
+
+  var adminCount = users.filter((user) => user.role === "Admin").length;
 
   async function handleLogout() {
     if (isLoggingOut) return;
@@ -121,15 +128,48 @@ export default function SuperAdminPage() {
     }
   }
 
-  function toggleRole(id) {
-    setUsers((current) => current.map((user) => {
-      if (user.id !== id) return user;
-      const nextRole = user.role === "Admin" ? "User" : "Admin";
-      setNotice(`${user.name} is now an ${nextRole}.`);
-      return { ...user, role: nextRole };
-    }));
-  }
 
+  async function toggleRole(id) {
+    const user = users.find((u) => u.id === id);
+    if (!user) return;
+    console.log("current role",user.role);
+
+    // Prevent changing the super admin's role.
+    if (user.role === "SUPER_ADMIN" || user.role === "Super Admin") {
+      alert("You cannot change the super admin's role.");
+      return;
+    }
+    const nextRole = user.role === "Admin" ? "User" : "Admin";
+    const confirmed = window.confirm(
+      `Do you want to make ${user.name} ${nextRole === "Admin " ? "an Admin" : "a User"}?`
+    );
+
+    if (!confirmed) return;
+
+    try {
+      await axios.patch(`/api/users/${id}/role`, {
+        role: nextRole,
+      });
+
+      setUsers((current) =>
+        current.map((u) =>
+          u.id === id
+            ? { ...u, role: nextRole === "Admin" ? "Admin" : "User" }
+            : u
+        )
+      );
+
+      setNotice(
+        `${user.name} is now ${nextRole === "Admin" ? "an Admin" : "a User"}.`
+      );
+    } catch (err) {
+      console.error(
+        "Role update failed:",
+        err.response?.data || err.message
+      );
+      setNotice("Could not update the user's role. Please try again.");
+    }
+  }
   function handleUpload(event) {
     const files = Array.from(event.target.files || []);
     if (!files.length) return;
@@ -138,7 +178,6 @@ export default function SuperAdminPage() {
     setNotice(`${files.length} image${files.length > 1 ? "s" : ""} ready to upload.`);
     event.target.value = "";
   }
-
   return (
     <main className={styles.dashboard}>
       <aside className={styles.sidebar}>
@@ -179,7 +218,12 @@ export default function SuperAdminPage() {
 
         <div className={styles.workspaceGrid}>
           <section className={styles.panel}>
-            <div className={styles.panelHeading}><div><h2>Workspace members</h2><p>Assign administrator privileges to trusted users.</p></div><button className={styles.moreButton} aria-label="Member options"><MoreHorizontal size={20} /></button></div>
+            <div className={styles.panelHeading}>
+              <div>
+                <h2>Workspace members</h2>
+                <p>Assign administrator privileges to trusted users.</p></div><button className={styles.moreButton} aria-label="Member options">
+                <MoreHorizontal size={20} />
+              </button></div>
             <div className={styles.tableTools}>
               <label className={styles.search}><Search size={17} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search people" aria-label="Search people" /></label>
               <label className={styles.filter}><SlidersHorizontal size={16} /><select value={roleFilter} onChange={(event) => setRoleFilter(event.target.value)} aria-label="Filter by role"><option>All roles</option><option>Admin</option><option>User</option></select></label>
@@ -209,7 +253,7 @@ export default function SuperAdminPage() {
                         ? styles.adminRole
                         : styles.userRole
                         }`}
-                      onClick={() => toggleRole(user.id)}
+                      onClick={(e) => toggleRole(user.id)}
                     >
                       {user.role === "Admin" ? (
                         <ShieldCheck size={14} />
@@ -253,13 +297,13 @@ export default function SuperAdminPage() {
           </section>
 
           <aside className={styles.rightRail}>
-            <section className={`${styles.panel} ${styles.uploadPanel}`}>
+            {/* <section className={`${styles.panel} ${styles.uploadPanel}`}>
               <div className={styles.panelHeading}><div><h2>Image library</h2><p>Upload images for your site.</p></div></div>
               <input ref={inputRef} className={styles.fileInput} type="file" accept="image/*" multiple onChange={handleUpload} />
               <button className={styles.dropzone} onClick={() => inputRef.current?.click()}><span><Upload size={20} /></span><strong>Upload images</strong><small>PNG, JPG or WEBP up to 10MB</small></button>
               <div className={styles.assetRow}><span className={styles.assetPreview}><FolderOpen size={17} /></span><span><strong>{uploads.length ? `${uploads.length} new image${uploads.length > 1 ? "s" : ""}` : "18 images"}</strong><small>Available in the media library</small></span><ArrowUpRight size={17} /></div>
               {uploads.length > 0 && <div className={styles.previewGrid}>{uploads.map((image) => <img key={image.url} src={image.url} alt={image.name} />)}</div>}
-            </section>
+            </section> */}
 
             <section className={`${styles.panel} ${styles.activityPanel}`}>
               <div className={styles.panelHeading}><div><h2>Recent activity</h2><p>Latest workspace changes</p></div><button className={styles.viewAll} onClick={() => setNotice("Activity log opened.")}>View all</button></div>

@@ -1,8 +1,13 @@
 import { Toaster } from "react-hot-toast";
 import type { Metadata } from "next";
-import { Delius, Exo_2 } from "next/font/google";
+import { Delius, Exo_2, Noto_Sans, Playfair_Display } from "next/font/google";
 import { CartProvider } from "./Components/cart/CartContext";
 import "./globals.css";
+import { cn } from "@/lib/utils";
+
+const playfairDisplayHeading = Playfair_Display({subsets:['latin'],variable:'--font-heading'});
+
+const notoSans = Noto_Sans({subsets:['latin'],variable:'--font-sans'});
 
 const exo = Exo_2({
   subsets: ["latin"],
@@ -22,7 +27,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en">
+    <html lang="en" className={cn("font-sans", notoSans.variable, playfairDisplayHeading.variable)}>
       <body className={exo.className}>
         <CartProvider>
           <Toaster />

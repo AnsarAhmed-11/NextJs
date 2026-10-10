@@ -4,6 +4,7 @@
     background: #f7f8fc;
     color: #182037;
     font-family: Arial, Helvetica, sans-serif;
+    user-select: none;
 }
 
 .logoutButton {
